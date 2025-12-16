@@ -10,6 +10,24 @@ if (navToggle && navMenu) {
     });
 }
 
+/ show normal menu on larger screens /
+@media screen and (min-width: 1024px) {
+ .nav-menu {
+ position: static; / remove off-screen positioning /
+ right: auto;
+ width: auto;
+ height: auto;
+ padding: 0;
+ background: transparent;
+ transition: none;
+ display: flex;
+ align-items: center;
+ }
+ .nav-list { display: flex; gap: 1.5rem; margin-bottom: 0; }
+ .nav-item { margin-bottom: 0; }
+ .nav-toggle { display: none; } / hide hamburger on desktop /
+}
+
 /*=============== REMOVE MENU MOBILE ===============*/
 const navLinks = document.querySelectorAll('.nav-link');
 
