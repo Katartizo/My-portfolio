@@ -1,34 +1,34 @@
 /*=============== MENU ===============*/
-const navMenu = document.getElementById('nav-menu');
-const navToggle = document.getElementById('nav-toggle');
+const navMenu  = document.getElementById('nav-menu'),
+navToggle = document.getElementById('nav-toggle');
 
 /* Menu show - hidden */
-if (navToggle && navMenu) {
-    navToggle.addEventListener('click', () => {
-        navMenu.classList.toggle('show-menu');
-        navToggle.classList.toggle('animate-toggle');
-    });
+navToggle.addEventListener('click', ( ) => {
+    navMenu.classList.toggle('show-menu');
+    navToggle.classList.toggle('animate-toggle');
+});
+
 
 /*=============== REMOVE MENU MOBILE ===============*/
-const navLinks = document.querySelectorAll('.nav-link');
+const navwork = document.querySelectorAll('.nav-work');
 
 function linkAction() {
-    const navMenuLocal = document.getElementById('nav-menu');
-    if (navMenuLocal) navMenuLocal.classList.remove('show-menu');
-    if (navToggle) navToggle.classList.remove('animate-toggle');
+    const navMenu = document.getElementById('nav-menu');
+
+   navMenu.classList.remove('show-menu');
+    navToggle.classList.remove('animate-toggle');
 }
 
-navLinks.forEach((a) => a.addEventListener('click', linkAction));
+navwork.forEach((a) => a.addEventListener('click', linkAction));
 
 /*=============== CHANGE BACKGROUND HEADER ===============*/
 
 const scrollHeader = () => {
     const header = document.getElementById('header');
-    if (!header) return;
 
-    (window.scrollY || window.pageYOffset) >= 20
-        ? header.classList.add('bg-header')
-        : header.classList.remove('bg-header');
+    window.scrollY >= 20 
+    ? header.classList.add('bg-header') 
+    : header.classList.remove('bg-header');
 };
 
 window.addEventListener('scroll', scrollHeader);
@@ -37,21 +37,19 @@ window.addEventListener('scroll', scrollHeader);
 const sections = document.querySelectorAll('section[id]');
 
 const scrollActive = () => {
-    const scroll = window.pageYOffset;
+    const scrollY = window.pageYOffset;
 
-    sections.forEach((current) => {
-        const sectionHeight = current.offsetHeight;
-        const sectionTop = current.offsetTop - 50;
-        const sectionId = current.getAttribute('id');
-        const selector = '.nav-menu a[href*="' + sectionId + '"]';
-        const sectionClass = document.querySelector(selector);
+    sections.forEach((current)  => {
+        const sectionHeight = current.offsetHeight,
+        sectionTop = current.offsetTop - 50,
+        sectionId = current.getAttribute('id'),
+        sectionClass = document.querySelector('.nav-menu a[href*' +  sectionId + ']');
 
-        if (sectionClass) {
-            if (scroll > sectionTop && scroll <= sectionTop + sectionHeight) {
-                sectionClass.classList.add('active-link');
-            } else {
-                sectionClass.classList.remove('active-link');
-            }
+
+        if(scrollY > sectionTop && scrollY  <=  sectionTop + sectionHeight) {
+            sectionClass.classList.add('active-link');
+        } else {
+            sectionClass.classList.remove('active-link');
         }
     });
 };
@@ -98,7 +96,6 @@ function activeWork() {
 
 linkWork.forEach((a) => a.addEventListener('click', activeWork));
 
-
 /*=============== RESUME ===============*/
 const accordionItems = document.querySelectorAll('.resume-item');
 
@@ -143,59 +140,55 @@ var testimonialsSwiper = new Swiper('.testimonials-swiper', {
 });
 
 
-/*=============== EMAIL JS ===============*/
-const contactForm = document.getElementById('contact-form');
-const contactName = document.getElementById('contact-name');
-const contactEmail = document.getElementById('contact-email');
-const contactSubject = document.getElementById('contact-subject');
-const contactMessage = document.getElementById('contact-message');
-const message = document.getElementById('message');
+/*=============== EMAIL JS (ERROR INSIDE INPUTS) ===============*/
+const contactForm = document.getElementById('contact-form'),
+      contactName = document.getElementById('contact-name'),
+      contactEmail = document.getElementById('contact-email'),
+      contactSubject = document.getElementById('contact-subject'),
+      contactMessage = document.getElementById('contact-message'),
+      message = document.getElementById('message');
 
 const sendEmail = (e) => {
     e.preventDefault();
 
-    if (
-        !contactName || !contactEmail || !contactSubject || !contactMessage ||
-        contactName.value.trim() === '' ||
-        contactEmail.value.trim() === '' ||
-        contactSubject.value.trim() === '' ||
-        contactMessage.value.trim() === ''
-    ) {
-        if (message) {
-            message.classList.remove('color-first');
-            message.textContent = 'Write all the input fields';
-            message.classList.add('color-red');
+    // 1. Create a list of your inputs
+    const inputs = [contactName, contactEmail, contactSubject, contactMessage];
+    let hasError = false;
 
-            setTimeout(() => {
-                message.textContent = '';
-            }, 3000);
+    // 2. Check each input. If empty, turn it RED and show message INSIDE.
+    inputs.forEach(input => {
+        if(input.value === ''){
+            hasError = true;
+            input.classList.add('input-error'); // Turns border red (from CSS)
+            input.placeholder = 'Write all the input fields'; // Shows message inside
         }
-        return;
-    }
+    });
 
-    if (typeof emailjs !== 'undefined' && contactForm) {
-        emailjs.sendForm('service_va8dh2w', 'template_fnquuhg', '#contact-form')
-            .then(() => {
-                if (message) {
-                    message.textContent = 'Message sent ✔';
-                    message.classList.add('color-first');
-                    setTimeout(() => { message.textContent = ''; }, 5000);
-                }
-            }, (error) => {
-                console.error('EmailJS error', error);
-                alert('Oops! Something went wrong.');
+    if(hasError){
+        // 3. Remove the red error after 3 seconds
+        setTimeout(() => {
+            inputs.forEach(input => {
+                input.classList.remove('input-error');
+                input.placeholder = ''; // Clear the message
             });
-
-        contactName.value = '';
-        contactEmail.value = '';
-        contactSubject.value = '';
-        contactMessage.value = '';
+        }, 3000);
     } else {
-        console.warn('emailjs not available or form not found');
+        // 4. If no errors, Send Email
+        // 👇👇 PASTE YOUR KEYS HERE 👇👇
+        emailjs.sendForm('service_fq0mpjm', 'template_hnvn4u7', '#contact-form', 'ELFrx7vVcXdL9U6os')
+            .then(() => {
+                message.textContent = 'Message sent successfully ✅';
+                message.style.color = 'green';
+                setTimeout(() => { message.textContent = '' }, 5000);
+                contactForm.reset();
+            }, (error) => {
+                alert('OPs! SOMETHING WENT WRONG...', error);
+            });
     }
-};
+}
+if(contactForm) contactForm.addEventListener('submit', sendEmail);
 
-if (contactForm) contactForm.addEventListener('submit', sendEmail);
+
 
 /*=============== STYLE SWITCHER ===============*/
 
@@ -208,9 +201,20 @@ if (contactForm) contactForm.addEventListener('submit', sendEmail);
 /*=============== LIGHT/DARK MODE ===============*/
 const themeButton = document.getElementById('theme-toggle');
 
-if (themeButton) {
-    themeButton.addEventListener('click', () => {
-        document.body.classList.toggle('dark-theme');
-        themeButton.classList.toggle('ri-sun-line');
-    });
+themeButton.addEventListener('click',  () => {
+    document.body.classList.toggle('dark-theme');
+    themeButton.classList.toggle('ri-sun-line');
+});
+
+
+
+/* =============== REMOVE MENU MOBILE ON CLICK =============== */
+const navLink = document.querySelectorAll('.nav-link') // I changed this to match your HTML
+
+function linkAction(){
+    const navMenu = document.getElementById('nav-menu')
+    // This removes the class that makes the menu visible
+    // Note: Ensure your CSS uses 'show-menu' to display the mobile nav
+    navMenu.classList.remove('show-menu') 
 }
+navLink.forEach(n => n.addEventListener('click', linkAction))
